@@ -1,0 +1,1610 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Let's Help Roy!</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts for Kids -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: radial-gradient(circle, #f0fdf4 0%, #dcfce7 100%);
+      user-select: none;
+    }
+    .font-kids {
+      font-family: 'Fredoka One', cursive;
+    }
+    @keyframes flash-red-blue {
+      0%, 100% { fill: #ef4444; filter: drop-shadow(0 0 6px #ef4444); }
+      50% { fill: #3b82f6; filter: drop-shadow(0 0 12px #3b82f6); }
+    }
+    .siren-flash {
+      animation: flash-red-blue 0.8s infinite;
+    }
+    @keyframes bounce-slow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .roy-bounce {
+      animation: bounce-slow 2s infinite ease-in-out;
+    }
+    /* Mic Pulsing Wave for Speaking Level */
+    @keyframes pulse-mic {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.8); }
+      70% { transform: scale(1.18); box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+    .mic-recording {
+      animation: pulse-mic 1.2s infinite;
+    }
+    /* Blackboard slate look for writing */
+    .blackboard-slate {
+      background-color: #1e3f35;
+      border: 14px solid #8b5a2b;
+      box-shadow: inset 0 0 24px rgba(0,0,0,0.6), 0 12px 18px rgba(0,0,0,0.25);
+    }
+    /* Chalkboard text input style */
+    .chalk-input {
+      background: transparent;
+      border-bottom: 6px dashed rgba(255, 255, 255, 0.6);
+      color: #fef08a;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+      outline: none;
+    }
+    .chalk-input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+      font-style: italic;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-3 md:p-6 text-slate-800">
+
+  <!-- TOP STATUS HUD -->
+  <header id="top-hud" class="w-full max-w-3xl bg-white rounded-3xl p-3 md:p-4 shadow-xl flex justify-between items-center border-4 border-yellow-400 gap-1.5 md:gap-2">
+    <!-- Return to Website Button -->
+    <a href="https://escaperoomassure.my.canva.site/mindbridge-a-site-for-fun-esl-games" target="_top" class="flex items-center gap-1 bg-purple-500 hover:bg-purple-600 text-white px-2.5 md:px-3 py-2 rounded-full font-kids text-xs md:text-sm shadow-md transition-all active:scale-95 border-2 border-white" title="MindBridge Website">
+      <i class="fa-solid fa-house"></i>
+      <span class="hidden sm:inline">Website</span>
+    </a>
+
+    <!-- Go Back to Map Button -->
+    <button id="hud-map-btn" onclick="goToNextStation()" class="flex items-center gap-1 bg-emerald-500 hover:bg-emerald-600 text-white px-2.5 md:px-3 py-2 rounded-full font-kids text-xs md:text-sm shadow-md transition-all active:scale-95 border-2 border-white" title="Return to Route Map">
+      <i class="fa-solid fa-map-location-dot"></i>
+      <span>Map</span>
+    </button>
+
+    <!-- Star count score -->
+    <div class="flex items-center gap-1.5 bg-yellow-100 text-yellow-800 px-3 md:px-4 py-1.5 md:py-2 rounded-full font-kids text-base md:text-2xl shadow-inner">
+      <i class="fa-solid fa-star text-yellow-500 text-lg md:text-2xl animate-bounce"></i>
+      <span id="star-count">0</span>
+    </div>
+
+    <!-- Active Station details -->
+    <div class="text-center hidden sm:block">
+      <span id="hud-subtitle" class="text-xs font-black text-slate-400 uppercase tracking-widest block">Rescue School</span>
+      <h2 id="hud-title" class="font-kids text-base md:text-xl text-red-500 leading-tight">Welcome</h2>
+    </div>
+
+    <!-- Speaker Button -->
+    <button onclick="toggleVoice()" id="voice-btn" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center text-base md:text-xl shadow-lg transition-transform active:scale-90 border-2 border-white shrink-0">
+      <i class="fa-solid fa-volume-high" id="voice-icon"></i>
+    </button>
+  </header>
+
+  <!-- MAIN AREA -->
+  <main class="w-full max-w-3xl flex-grow flex items-center justify-center my-4">
+
+    <!-- SCREEN 1: SPLASH PAGE -->
+    <section id="screen-splash" class="w-full bg-white rounded-3xl p-6 md:p-10 shadow-2xl border-8 border-red-500 text-center space-y-6">
+      <div class="flex justify-center">
+        <div class="roy-bounce w-56 h-56 md:w-64 md:h-64" id="roy-splash-svg">
+          <!-- Dynamically filled with Roy Custom SVG -->
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <h1 class="text-4xl md:text-6xl font-kids text-slate-800 tracking-tight">Let's Help Roy!</h1>
+        <p class="text-xl md:text-2xl font-black text-slate-500">English Year 1 • Greetings & Numbers</p>
+      </div>
+
+      <div class="p-4 bg-red-50 rounded-2xl border-4 border-red-200 max-w-md mx-auto">
+        <p class="text-lg md:text-xl font-bold text-red-700 leading-relaxed font-sans">
+          Listen, read, write, and speak with Roy! 🚒
+        </p>
+      </div>
+
+      <!-- Firestore sync indicator -->
+      <div id="db-status-badge" class="text-sm font-bold text-slate-400 flex items-center justify-center gap-2">
+        <i class="fa-solid fa-cloud-arrow-up animate-pulse text-base"></i> Online rescue log active
+      </div>
+
+      <div class="space-y-3 max-w-md mx-auto">
+        <button onclick="startRescueAcademy()" class="w-full py-6 bg-emerald-500 hover:bg-emerald-600 text-white font-kids text-3xl rounded-3xl shadow-xl transition-all active:scale-95 border-b-8 border-emerald-700 uppercase tracking-wide">
+          Start Game! 🚒
+        </button>
+
+        <a href="https://escaperoomassure.my.canva.site/mindbridge-a-site-for-fun-esl-games" target="_top" class="inline-flex items-center justify-center gap-2 w-full py-4 bg-purple-500 hover:bg-purple-600 text-white font-kids text-xl rounded-2xl shadow-lg transition-all active:scale-95 border-b-4 border-purple-700">
+          <i class="fa-solid fa-arrow-left"></i> Back to MindBridge ESL Website
+        </a>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: ROUTE MAP -->
+    <section id="screen-map" class="w-full bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-8 border-blue-400 text-center space-y-6 hidden">
+      <h2 class="font-kids text-3xl md:text-4xl text-slate-800">Pick a Game!</h2>
+      <p class="text-slate-600 font-black text-lg md:text-xl">Tap any box to play with Roy!</p>
+
+      <!-- Progress Track -->
+      <div class="w-full bg-slate-100 rounded-full h-5 relative overflow-hidden my-2 border-2 border-slate-200">
+        <div id="route-progress-bar" class="bg-blue-500 h-full w-0 transition-all duration-500"></div>
+      </div>
+
+      <div id="map-stations-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <!-- Injected dynamically based on rescue progress progress -->
+      </div>
+
+      <div class="pt-4 border-t-2 border-slate-100 flex flex-col items-center gap-3">
+        <button id="final-badge-btn" onclick="openBadgeScreen()" class="w-full py-5 bg-yellow-400 hover:bg-yellow-500 text-slate-800 font-kids text-2xl rounded-2xl shadow-lg border-b-8 border-yellow-600 transition-all">
+          🏆 Claim Certificate!
+        </button>
+
+        <a href="https://escaperoomassure.my.canva.site/mindbridge-a-site-for-fun-esl-games" target="_top" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-100 hover:bg-purple-200 text-purple-800 font-kids text-base rounded-xl transition-all border-2 border-purple-300">
+          <i class="fa-solid fa-house"></i> Exit to MindBridge Games
+        </a>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: TEACHING INTRO ("BIMBING DULU") -->
+    <section id="screen-teach" class="w-full bg-white rounded-3xl p-6 shadow-2xl border-8 border-amber-400 text-center space-y-6 hidden">
+      <div class="flex justify-center">
+        <div class="w-36 h-36 bg-red-50 rounded-full flex items-center justify-center border-4 border-red-500 relative shadow-inner">
+          <div id="teach-roy-avatar" class="w-28 h-28"></div>
+        </div>
+      </div>
+
+      <div class="space-y-1">
+        <span class="text-sm font-black bg-amber-100 text-amber-800 px-4 py-1.5 rounded-full uppercase tracking-wider font-kids">How to Play</span>
+        <h3 id="teach-title" class="font-kids text-3xl md:text-4xl text-slate-800">Let's Help Roy!</h3>
+      </div>
+
+      <!-- Visual guides checklist for Year 1 children -->
+      <div id="teach-steps-container" class="grid grid-cols-1 gap-4 max-w-md mx-auto text-left">
+        <!-- Filled dynamically based on current skill type -->
+      </div>
+
+      <!-- Play lesson voice helper -->
+      <div class="flex justify-center pt-1">
+        <button onclick="speakLesson()" class="px-8 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-kids rounded-full shadow-lg flex items-center gap-3 transform active:scale-95 transition-all text-lg">
+          <i class="fa-solid fa-volume-high text-xl"></i> Hear Roy!
+        </button>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto pt-2 font-kids">
+        <button onclick="launchPlayMode()" class="flex-1 py-5 bg-emerald-500 hover:bg-emerald-600 text-white text-2xl rounded-2xl shadow-lg border-b-8 border-emerald-700 transition active:scale-95 uppercase tracking-wide">
+          Play Now! 🚀
+        </button>
+        <button onclick="goToNextStation()" class="py-5 px-6 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xl rounded-2xl transition active:scale-95 border-b-4 border-slate-400">
+          🗺️ Route Map
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: ACTIVITY WINDOW -->
+    <section id="screen-game" class="w-full bg-white rounded-3xl p-6 shadow-2xl border-8 border-indigo-400 text-center space-y-6 hidden">
+      <div class="flex justify-between items-center text-slate-500 font-black text-sm md:text-base">
+        <span id="game-skill-indicator" class="bg-indigo-100 text-indigo-800 px-4 py-1.5 rounded-full uppercase font-kids text-base">LISTENING</span>
+        <span id="game-progress-indicator" class="uppercase font-kids">QUESTION 1/10</span>
+      </div>
+
+      <!-- Play / Listen Trigger -->
+      <div id="audio-trigger-container" class="flex justify-center">
+        <button id="btn-audio-helper" onclick="speakActiveQuestion()" class="w-24 h-24 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center shadow-xl transform active:scale-90 transition-all animate-bounce border-4 border-white">
+          <i class="fa-solid fa-volume-high text-4xl"></i>
+        </button>
+      </div>
+
+      <!-- Storyteller layout for Reading -->
+      <div id="reading-word-sign" class="hidden my-2 p-6 bg-amber-50 border-8 border-amber-400 rounded-3xl shadow-md text-center max-w-md mx-auto flex flex-col items-center gap-2">
+        <div class="text-amber-500 text-3xl"><i class="fa-solid fa-book-open"></i></div>
+        <p class="text-xs font-black uppercase text-amber-800 tracking-wider font-kids">Read this:</p>
+        <p id="reading-word-text" class="font-kids text-xl md:text-2xl text-slate-800 mt-1 leading-relaxed italic tracking-wide max-w-sm"></p>
+      </div>
+
+      <!-- Visual Blackboard for Typing Writing Station -->
+      <div id="writing-word-sign" class="hidden w-full max-w-md mx-auto blackboard-slate rounded-3xl p-6 flex flex-col items-center gap-4 text-white relative">
+        <!-- Blackboard Clue Image -->
+        <div id="writing-reference-graphic" class="w-28 h-28 flex items-center justify-center bg-white/10 rounded-2xl p-2 border-2 border-white/20"></div>
+        
+        <!-- Typewriting input on chalkboard -->
+        <div class="w-full space-y-2">
+          <label for="writing-input-box" class="text-xs font-kids text-amber-200 uppercase tracking-widest block">Type your answer here:</label>
+          <input type="text" id="writing-input-box" placeholder="Type sentence..." class="chalk-input w-full text-center font-kids text-2xl md:text-3xl py-2 px-3" autocomplete="off">
+        </div>
+
+        <!-- Chalk Eraser Button -->
+        <button id="chalk-eraser" onclick="clearChalkboardSentence()" class="absolute top-3 right-3 text-white/70 hover:text-white hover:scale-110 transition-transform text-lg p-2 rounded-full hover:bg-white/10 flex items-center gap-1" title="Clear text">
+          <i class="fa-solid fa-eraser"></i> <span class="text-xs uppercase font-kids font-bold">Clear</span>
+        </button>
+      </div>
+
+      <div class="space-y-2">
+        <h2 id="game-instruction" class="font-kids text-2xl md:text-3xl text-slate-800">Who is talking?</h2>
+        <p id="game-help-cue" class="text-sm font-black text-slate-400 uppercase tracking-wider font-sans">Tap the big red button!</p>
+      </div>
+
+      <!-- Option Cards Interface / Word Choice Reference Tiles -->
+      <div id="game-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+        <!-- Injected options -->
+      </div>
+
+      <!-- Submit button for Chalkboard builder -->
+      <div id="writing-submit-container" class="hidden flex justify-center">
+        <button onclick="checkChalkboardBuild()" class="px-10 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-kids text-2xl rounded-2xl shadow-lg border-b-8 border-emerald-700 active:scale-95 transition-all">
+          Check Answer! ✔️
+        </button>
+      </div>
+
+      <!-- Microphone Speaking Interface -->
+      <div id="speaking-mic-interface" class="hidden space-y-4 py-4">
+        <div class="flex flex-col items-center justify-center gap-4">
+          <!-- Target Sentence Bubble for Speaking -->
+          <div class="bg-yellow-100 border-4 border-yellow-400 px-8 py-5 rounded-3xl shadow-md text-center max-w-sm">
+            <p class="text-sm uppercase font-black text-yellow-800 tracking-wider font-kids">Say This Sentence:</p>
+            <p id="speaking-target-word" class="font-kids text-3xl md:text-4xl text-slate-800 mt-2 leading-snug">Hello, I am Roy.</p>
+          </div>
+
+          <!-- Large Mic Button -->
+          <button id="btn-mic-capture" onclick="startSpeechCapture()" class="w-28 h-28 rounded-full bg-red-500 text-white flex items-center justify-center text-5xl shadow-2xl transition-all border-4 border-white">
+            <i class="fa-solid fa-microphone"></i>
+          </button>
+          <p id="mic-status-text" class="text-base font-black text-red-500 uppercase tracking-widest animate-pulse font-kids">TAP TO SPEAK!</p>
+          <div id="speech-recognized-card" class="hidden bg-slate-50 border-2 border-slate-200 px-5 py-3 rounded-2xl text-sm font-bold">
+            I heard: <span id="speech-heard-phrase" class="text-blue-600 font-kids text-lg">"Hello, I am Roy"</span>
+          </div>
+          <!-- Manual fallback validation -->
+          <button onclick="skipVoiceVerify()" class="text-sm text-slate-400 underline hover:text-slate-600 font-bold font-sans">Mic not working? Tap here!</button>
+        </div>
+      </div>
+
+      <!-- Smart Feedback Box -->
+      <div id="round-feedback" class="py-5 px-6 rounded-3xl font-kids text-xl hidden flex flex-col gap-3 items-center justify-center border-4 shadow-lg">
+        <div class="flex items-center gap-3">
+          <p id="feedback-headline" class="font-kids text-2xl md:text-3xl"></p>
+          <!-- User-triggered audio button for explanation -->
+          <button id="btn-feedback-audio" onclick="speakExplanation()" class="w-12 h-12 rounded-full bg-white hover:bg-slate-100 text-slate-800 flex items-center justify-center text-lg shadow border-2 border-slate-200">
+            <i class="fa-solid fa-volume-high"></i>
+          </button>
+        </div>
+        <p id="feedback-explanation" class="text-base md:text-lg font-bold text-slate-700 max-w-md font-sans leading-snug"></p>
+        <div class="flex gap-2 pt-1">
+          <button id="btn-next-step" onclick="advanceNext()" class="px-8 py-3.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-2xl font-kids text-xl shadow-md border-b-4 border-indigo-700">Next Question <i class="fa-solid fa-arrow-right ml-1"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 5: AWARD CERTIFICATE -->
+    <section id="screen-badge" class="w-full flex flex-col items-center space-y-6 hidden">
+      
+      <!-- Certificate Card -->
+      <div id="print-certificate-zone" class="w-full bg-amber-50 rounded-3xl p-6 md:p-10 shadow-2xl border-[16px] border-double border-yellow-500 relative overflow-hidden max-w-2xl text-center space-y-6">
+        
+        <!-- Ornate Corner Decorations -->
+        <div class="absolute top-3 left-3 text-yellow-500 text-3xl opacity-50"><i class="fa-solid fa-star"></i></div>
+        <div class="absolute top-3 right-3 text-yellow-500 text-3xl opacity-50"><i class="fa-solid fa-star"></i></div>
+        <div class="absolute bottom-3 left-3 text-yellow-500 text-3xl opacity-50"><i class="fa-solid fa-star"></i></div>
+        <div class="absolute bottom-3 right-3 text-yellow-500 text-3xl opacity-50"><i class="fa-solid fa-star"></i></div>
+
+        <!-- Certificate Header -->
+        <div class="space-y-1">
+          <h4 class="font-kids text-amber-800 text-sm md:text-base tracking-widest font-black uppercase">Brooms Town Rescue School</h4>
+          <h2 class="font-kids text-slate-900 text-3xl md:text-4xl tracking-wide font-black border-b-4 border-yellow-300 pb-2 mx-auto max-w-md">CERTIFICATE</h2>
+          <p class="font-bold text-slate-600 text-sm uppercase tracking-widest mt-2">Awarded to</p>
+        </div>
+
+        <!-- Recipient Name Holder -->
+        <div class="my-4">
+          <p id="badge-name-display" class="font-kids text-4xl md:text-5xl text-red-500 underline decoration-amber-400 decoration-wavy underline-offset-8">Cadet Hero</p>
+        </div>
+
+        <!-- Accomplishment text -->
+        <div class="max-w-md mx-auto space-y-2">
+          <p class="font-sans text-base md:text-lg font-bold text-slate-700 leading-relaxed">
+            Great job learning English with Roy and friends! ⭐
+          </p>
+          <div class="flex justify-center gap-2 text-yellow-500 py-1 text-2xl">
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
+
+        <!-- Signatures -->
+        <div class="grid grid-cols-3 items-end pt-4 border-t-2 border-amber-200 max-w-lg mx-auto">
+          <!-- Roy Signature -->
+          <div class="text-center">
+            <p class="font-kids text-base md:text-lg text-red-600 leading-none">Roy Rescue</p>
+            <div class="border-b-2 border-slate-300 w-24 mx-auto my-1"></div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider font-sans">Roy</p>
+          </div>
+
+          <!-- Official Golden Seal -->
+          <div class="flex flex-col items-center justify-center relative">
+            <div class="w-16 h-16 bg-gradient-to-tr from-yellow-500 via-amber-400 to-yellow-300 rounded-full border-4 border-yellow-600 flex items-center justify-center shadow-lg relative z-10">
+              <div class="w-12 h-12 border-2 border-dashed border-yellow-700 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-shield-halved text-yellow-800 text-xl"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Poli Signature -->
+          <div class="text-center">
+            <p class="font-kids text-base md:text-lg text-blue-600 leading-none">Officer Poli</p>
+            <div class="border-b-2 border-slate-300 w-24 mx-auto my-1"></div>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider font-sans">Poli</p>
+          </div>
+        </div>
+
+        <!-- Date stamp -->
+        <div class="text-xs font-bold text-slate-400 font-sans">
+          Date: <span id="cert-date-stamp">May 24, 2026</span>
+        </div>
+      </div>
+
+      <!-- Name personalization inputs & restart button -->
+      <div class="w-full max-w-2xl bg-white rounded-3xl p-6 shadow-xl border-4 border-yellow-400 space-y-4 text-center">
+        <h3 class="font-kids text-xl text-slate-800">Type Your Name:</h3>
+        
+        <div class="max-w-sm mx-auto">
+          <input type="text" id="cadet-name-input" placeholder="Your name here..." class="w-full text-center px-4 py-3 border-4 border-slate-300 rounded-2xl font-kids text-2xl focus:outline-none focus:border-yellow-400" oninput="syncBadgeName()">
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto pt-2">
+          <button onclick="goToNextStation()" class="flex-1 py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-kids text-xl rounded-2xl transition active:scale-95 shadow-md border-b-4 border-emerald-700 flex items-center justify-center gap-2">
+            🗺️ Route Map
+          </button>
+          <button onclick="resetRescueAcademy()" class="flex-1 py-4 bg-blue-500 hover:bg-blue-600 text-white font-kids text-xl rounded-2xl transition active:scale-95 shadow-md border-b-4 border-blue-700">
+            🔄 Play Again
+          </button>
+          <a href="https://escaperoomassure.my.canva.site/mindbridge-a-site-for-fun-esl-games" target="_top" class="flex-1 py-4 bg-purple-500 hover:bg-purple-600 text-white font-kids text-xl rounded-2xl transition active:scale-95 shadow-md border-b-4 border-purple-700 flex items-center justify-center gap-2">
+            <i class="fa-solid fa-house"></i> MindBridge
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 6: GENERAL SUCCESS / SCORE DESK POPUP -->
+    <section id="screen-victory" class="w-full bg-white rounded-3xl p-6 shadow-2xl border-8 border-emerald-500 text-center space-y-6 hidden">
+      <div class="flex justify-center animate-pulse">
+        <div class="w-36 h-36 bg-yellow-400 rounded-full flex items-center justify-center border-4 border-white shadow-xl text-white text-6xl">
+          <i class="fa-solid fa-medal"></i>
+        </div>
+      </div>
+
+      <h2 class="font-kids text-4xl text-emerald-600">Great Job! ⭐</h2>
+      <p class="text-2xl font-bold text-slate-600 font-sans">You won this game!</p>
+
+      <!-- Active Station Score Card -->
+      <div class="bg-yellow-50 p-6 rounded-3xl border-4 border-dashed border-yellow-400 max-w-xs mx-auto">
+        <p class="text-sm font-black uppercase text-yellow-800 tracking-wider font-sans">Your Score:</p>
+        <p id="victory-score-display" class="font-kids text-5xl text-slate-800 mt-2">0 / 10 ⭐</p>
+      </div>
+
+      <!-- Year 1 Friendly Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto pt-2 font-kids">
+        <button onclick="goToNextStation()" class="flex-1 py-5 bg-emerald-500 hover:bg-emerald-600 text-white text-2xl rounded-2xl shadow-lg border-b-8 border-emerald-700 transition active:scale-95 uppercase tracking-wide">
+          Map! 🗺️
+        </button>
+        <button onclick="redoActiveStation()" class="flex-1 py-5 bg-purple-500 hover:bg-purple-600 text-white text-2xl rounded-2xl shadow-lg border-b-8 border-purple-700 transition active:scale-95 uppercase tracking-wide">
+          Redo! 🔄
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ROBOCAR POLI VECTOR GRAPHICS -->
+  <script>
+    const CharacterSVGs = {
+      roy: (className = "w-full h-full") => `
+        <svg viewBox="0 0 100 100" class="${className}" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="22" cy="78" r="13" fill="#1e293b"/>
+          <circle cx="22" cy="78" r="6" fill="#94a3b8"/>
+          <circle cx="78" cy="78" r="13" fill="#1e293b"/>
+          <circle cx="78" cy="78" r="6" fill="#94a3b8"/>
+          <rect x="15" y="32" width="70" height="42" rx="8" fill="#ef4444"/>
+          <rect x="15" y="55" width="70" height="20" fill="#dc2626"/>
+          <path d="M 25 32 L 75 32 L 68 15 L 32 15 Z" fill="#f1f5f9"/>
+          <ellipse cx="40" cy="24" rx="4" ry="6" fill="#0f172a"/>
+          <circle cx="38" cy="22" r="1.5" fill="#ffffff"/>
+          <ellipse cx="60" cy="24" rx="4" ry="6" fill="#0f172a"/>
+          <circle cx="58" cy="22" r="1.5" fill="#ffffff"/>
+          <path d="M 32 14 L 68 14 L 58 4 L 42 4 Z" fill="#facc15"/>
+          <circle class="siren-flash" cx="50" cy="1" r="5" fill="#3b82f6"/>
+          <rect x="35" y="50" width="30" height="15" rx="3" fill="#f8fafc"/>
+          <path d="M 43 56 Q 50 62 57 56" stroke="#0f172a" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+      `,
+      poli: (className = "w-full h-full") => `
+        <svg viewBox="0 0 100 100" class="${className}" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="22" cy="78" r="13" fill="#1e293b"/>
+          <circle cx="22" cy="78" r="6" fill="#cbd5e1"/>
+          <circle cx="78" cy="78" r="13" fill="#1e293b"/>
+          <circle cx="78" cy="78" r="6" fill="#cbd5e1"/>
+          <rect x="15" y="32" width="70" height="42" rx="8" fill="#2563eb"/>
+          <rect x="15" y="55" width="70" height="20" fill="#1d4ed8"/>
+          <polygon points="50,56 53,62 60,62 55,66 57,72 50,68 43,72 45,66 40,62 47,62" fill="#facc15"/>
+          <path d="M 25 32 L 75 32 L 68 15 L 32 15 Z" fill="#f1f5f9"/>
+          <ellipse cx="40" cy="24" rx="4" ry="6" fill="#0f172a"/>
+          <circle cx="38" cy="22" r="1.5" fill="#ffffff"/>
+          <ellipse cx="60" cy="24" rx="4" ry="6" fill="#0f172a"/>
+          <circle cx="58" cy="22" r="1.5" fill="#ffffff"/>
+          <rect x="35" y="10" width="30" height="5" fill="#facc15"/>
+          <circle class="siren-flash" cx="50" cy="5" r="6" fill="#ef4444"/>
+        </svg>
+      `,
+      amber: (className = "w-full h-full") => `
+        <svg viewBox="0 0 100 100" class="${className}" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="22" cy="78" r="13" fill="#1e293b"/>
+          <circle cx="22" cy="78" r="6" fill="#fda4af"/>
+          <circle cx="78" cy="78" r="13" fill="#1e293b"/>
+          <circle cx="78" cy="78" r="6" fill="#fda4af"/>
+          <rect x="15" y="32" width="70" height="42" rx="8" fill="#fff1f2"/>
+          <rect x="15" y="55" width="70" height="20" fill="#fecdd3"/>
+          <rect x="15" y="44" width="70" height="11" fill="#f43f5e"/>
+          <rect x="47" y="60" width="6" height="12" fill="#fff" rx="1"/>
+          <rect x="44" y="63" width="12" height="6" fill="#fff" rx="1"/>
+          <path d="M 25 32 L 75 32 L 68 15 L 32 15 Z" fill="#f1f5f9"/>
+          <ellipse cx="40" cy="24" rx="4" ry="6" fill="#0f172a"/>
+          <circle cx="38" cy="22" r="1.5" fill="#ffffff"/>
+          <ellipse cx="60" cy="24" rx="4" ry="6" fill="#0f172a"/>
+          <circle cx="58" cy="22" r="1.5" fill="#ffffff"/>
+          <path d="M 40 8 Q 50 14 60 8 L 50 14 Z" fill="#f43f5e"/>
+          <circle class="siren-flash" cx="50" cy="5" r="4" fill="#3b82f6"/>
+        </svg>
+      `,
+      helly: (className = "w-full h-full") => `
+        <svg viewBox="0 0 100 100" class="${className}" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="55" r="28" fill="#10b981"/>
+          <path d="M 32 40 Q 50 25 68 40 Q 75 55 50 62 Q 25 55 32 40 Z" fill="#e0f2fe"/>
+          <ellipse cx="42" cy="45" rx="3" ry="5" fill="#0f172a"/>
+          <ellipse cx="58" cy="45" rx="3" ry="5" fill="#0f172a"/>
+          <rect x="25" y="80" width="50" height="6" rx="3" fill="#64748b"/>
+          <line x1="38" y1="68" x2="38" y2="80" stroke="#64748b" stroke-width="6"/>
+          <line x1="62" y1="68" x2="62" y2="80" stroke="#64748b" stroke-width="6"/>
+          <line x1="50" y1="27" x2="50" y2="15" stroke="#facc15" stroke-width="6"/>
+          <ellipse cx="50" cy="12" rx="35" ry="5" fill="#facc15" class="animate-pulse"/>
+        </svg>
+      `,
+      siren: (className = "w-full h-full") => `
+        <svg viewBox="0 0 100 100" class="${className}" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 20 80 Q 50 10 80 80 Z" fill="#3b82f6" class="siren-flash"/>
+          <rect x="10" y="75" width="80" height="15" rx="4" fill="#64748b"/>
+        </svg>
+      `
+    };
+  </script>
+
+  <!-- FIREBASE INTEGRATION ENGINE (MANDATORY STORAGE ARCHITECTURE) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'lets-help-roy';
+
+    async function initFirebaseStorage() {
+      const dbStatus = document.getElementById('db-status-badge');
+      
+      if (typeof __firebase_config === 'undefined' || !__firebase_config) {
+        if (dbStatus) dbStatus.innerHTML = `<i class="fa-solid fa-circle-info text-amber-500"></i> Playing offline`;
+        return;
+      }
+
+      try {
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        // Authenticate (RULE 3)
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            currentUser = user;
+            if (dbStatus) dbStatus.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-500 text-base"></i> Online Save Ready`;
+            
+            // Fetch potential previous progress from Firestore
+            await loadProgressFromCloud();
+          }
+        });
+      } catch (err) {
+        console.error("Firebase init failed:", err);
+        if (dbStatus) dbStatus.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-500"></i> Offline mode`;
+      }
+    }
+
+    // Load progress from private path (RULE 1)
+    async function loadProgressFromCloud() {
+      if (!db || !currentUser) return;
+      try {
+        const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'profile');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.stationsCompleted) {
+            window.stationsCompleted = data.stationsCompleted;
+          }
+          if (typeof data.totalStars !== 'undefined') {
+            window.totalStars = data.totalStars;
+            window.updateHUDAwards();
+          }
+          if (data.cadetName) {
+            const inputField = document.getElementById('cadet-name-input');
+            if (inputField) {
+              inputField.value = data.cadetName;
+              window.syncBadgeName();
+            }
+          }
+          window.updateRouteMap();
+        }
+      } catch (e) {
+        console.error("Failed loading online progress", e);
+      }
+    }
+
+    // Save progress to private path (RULE 1)
+    async function saveProgressToCloud() {
+      if (!db || !currentUser) return;
+      try {
+        const cadetName = document.getElementById('cadet-name-input')?.value || "Cadet Hero";
+        const docRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'profile');
+        
+        // Ensure totalStars exists and is loaded safely on window scope
+        const stars = typeof window.totalStars !== 'undefined' ? window.totalStars : 0;
+
+        await setDoc(docRef, {
+          stationsCompleted: window.stationsCompleted || [false, false, false, false],
+          totalStars: stars,
+          cadetName: cadetName,
+          lastUpdated: new Date().toISOString()
+        }, { merge: true });
+      } catch (e) {
+        console.error("Failed backing up progress", e);
+      }
+    }
+
+    // Expose helper globally
+    window.saveProgressToCloud = saveProgressToCloud;
+
+    // Trigger on boot
+    initFirebaseStorage();
+  </script>
+
+  <!-- PURE HTML5 VOICE SYNTH & AUDIO CONFIG -->
+  <script>
+    let voiceActive = true;
+    let recognition;
+    let isListening = false;
+    let currentFeedbackText = ""; // Track current feedback message for user speech query
+
+    // Speech Recognition setup (Web Speech API)
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+    }
+
+    function toggleVoice() {
+      voiceActive = !voiceActive;
+      const icon = document.getElementById('voice-icon');
+      const btn = document.getElementById('voice-btn');
+      if (voiceActive) {
+        icon.className = "fa-solid fa-volume-high";
+        btn.className = "w-10 h-10 md:w-12 md:h-12 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center text-base md:text-xl shadow-lg border-2 border-white shrink-0";
+        speakNow("Voice is on!");
+      } else {
+        icon.className = "fa-solid fa-volume-xmark";
+        btn.className = "w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-400 hover:bg-slate-500 text-white flex items-center justify-center text-base md:text-xl shadow-lg border-2 border-white shrink-0";
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+        }
+      }
+    }
+
+    function speakNow(text) {
+      if (!voiceActive) return;
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); 
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.75; // Slower rate for Year 1 pupils
+        utterance.pitch = 1.25; // Friendly higher pitch
+        utterance.volume = 1.0; // Maximum output volume
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function playSynthBeep(correct) {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (correct) {
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.12); // E5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime); // Louder sound effect
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      } else {
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.35, audioCtx.currentTime); // Louder error chime
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      }
+    }
+  </script>
+
+  <!-- GAME DATABASE (AUDITED GRAMMAR & SENTENCE SPEAKING) -->
+  <script>
+    const trainingProgram = [
+      {
+        skill: "Listening",
+        icon: "fa-headset",
+        color: "bg-red-500",
+        border: "border-red-500",
+        lesson: {
+          title: "Listen to Roy!",
+          text: "Tap the red button. Listen and pick!",
+          voice: "Tap the red button! Listen and pick!"
+        },
+        activities: [
+          {
+            name: "Who is Speaking?",
+            instruction: "Listen! Who is talking?",
+            questions: [
+              { 
+                audio: "Hello! I am Roy the fire truck!", 
+                instruction: "Listen! Who is talking?",
+                options: ["Roy", "Poli"], 
+                charLeft: "roy", 
+                charRight: "poli", 
+                correctIdx: 0,
+                hintWrong: "Roy is RED!"
+              },
+              { 
+                audio: "Hi! My name is Poli.", 
+                instruction: "Listen! Who is talking?",
+                options: ["Amber", "Poli"], 
+                charLeft: "amber", 
+                charRight: "poli", 
+                correctIdx: 1,
+                hintWrong: "Poli is BLUE!" 
+              },
+              { 
+                audio: "Hello! My name is Amber.", 
+                instruction: "Listen! Who is talking?",
+                options: ["Amber", "Helly"], 
+                charLeft: "amber", 
+                charRight: "helly", 
+                correctIdx: 0,
+                hintWrong: "Amber is PINK!" 
+              },
+              { 
+                audio: "High up in the sky! I am Helly!", 
+                instruction: "Listen! Who is talking?",
+                options: ["Roy", "Helly"], 
+                charLeft: "roy", 
+                charRight: "helly", 
+                correctIdx: 1,
+                hintWrong: "Helly is GREEN!" 
+              },
+              { 
+                audio: "Roy is ready to roll!", 
+                instruction: "Listen! Who is talking?",
+                options: ["Poli", "Roy"], 
+                charLeft: "poli", 
+                charRight: "roy", 
+                correctIdx: 1,
+                hintWrong: "Roy is RED!" 
+              }
+            ]
+          },
+          {
+            name: "Listen & Count",
+            instruction: "Listen! Tap the stars!",
+            questions: [
+              { 
+                audio: "Poli has five stars.", 
+                instruction: "How many stars does Poli have?",
+                options: ["5 stars", "2 stars"], 
+                isNumber: true, 
+                correctIdx: 0,
+                hintWrong: "Poli has 5 stars!"
+              },
+              { 
+                audio: "Helly arrives at two o'clock.", 
+                instruction: "What time does Helly arrive?",
+                options: ["8 stars", "2 stars"], 
+                isNumber: true, 
+                correctIdx: 1,
+                hintWrong: "Helly arrives at 2 o'clock!" 
+              },
+              { 
+                audio: "Roy has three water hoses.", 
+                instruction: "How many hoses does Roy have?",
+                options: ["3 stars", "1 star"], 
+                isNumber: true, 
+                correctIdx: 0,
+                hintWrong: "Roy has 3 hoses!" 
+              },
+              { 
+                audio: "Amber gets one star.", 
+                instruction: "How many stars does Amber get?",
+                options: ["4 stars", "1 star"], 
+                isNumber: true, 
+                correctIdx: 1,
+                hintWrong: "Amber gets 1 star!" 
+              },
+              { 
+                audio: "Roy sees ten friends.", 
+                instruction: "How many friends does Roy see?",
+                options: ["10 stars", "6 stars"], 
+                isNumber: true, 
+                correctIdx: 0,
+                hintWrong: "Roy sees 10 friends!" 
+              }
+            ]
+          }
+        ]
+      },
+      {
+        skill: "Reading",
+        icon: "fa-book-open-reader",
+        color: "bg-blue-500",
+        border: "border-blue-500",
+        lesson: {
+          title: "Read Short Stories!",
+          text: "Read the yellow box. Tap the picture!",
+          voice: "Read the yellow box! Tap the picture!"
+        },
+        activities: [
+          {
+            name: "Find Friends",
+            instruction: "Tap the friend!",
+            questions: [
+              { 
+                readingParagraph: "This is Roy. He is red.", 
+                instruction: "Who is red?",
+                options: ["Roy", "Poli"], 
+                charLeft: "roy", 
+                charRight: "poli", 
+                correctIdx: 0,
+                hintWrong: "Roy is RED!" 
+              },
+              { 
+                readingParagraph: "This is Poli. He is blue.", 
+                instruction: "Who is blue?",
+                options: ["Amber", "Poli"], 
+                charLeft: "amber", 
+                charRight: "poli", 
+                correctIdx: 1,
+                hintWrong: "Poli is BLUE!" 
+              },
+              { 
+                readingParagraph: "Amber is pink.", 
+                instruction: "Who is pink?",
+                options: ["Amber", "Helly"], 
+                charLeft: "amber", 
+                charRight: "helly", 
+                correctIdx: 0,
+                hintWrong: "Amber is PINK!" 
+              },
+              { 
+                readingParagraph: "Helly is green. He can fly.", 
+                instruction: "Who can fly?",
+                options: ["Roy", "Helly"], 
+                charLeft: "roy", 
+                charRight: "helly", 
+                correctIdx: 1,
+                hintWrong: "Helly is GREEN!" 
+              },
+              { 
+                readingParagraph: "Roy is red. Poli is blue.", 
+                instruction: "Who is blue?",
+                options: ["Roy", "Poli"], 
+                charLeft: "roy", 
+                charRight: "poli", 
+                correctIdx: 1,
+                hintWrong: "Poli is BLUE!" 
+              }
+            ]
+          },
+          {
+            name: "Count Stars",
+            instruction: "Tap the correct count!",
+            questions: [
+              { 
+                readingParagraph: "I see four stars.", 
+                instruction: "Tap 4 stars!",
+                options: ["4 stars", "2 stars"], 
+                isNumber: true, 
+                correctIdx: 0,
+                hintWrong: "Tap 4 stars!" 
+              },
+              { 
+                readingParagraph: "Helly finds nine lights.", 
+                instruction: "Tap 9 lights!",
+                options: ["6 stars", "9 stars"], 
+                isNumber: true, 
+                correctIdx: 1,
+                hintWrong: "Tap 9 stars!" 
+              },
+              { 
+                readingParagraph: "Amber has five band-aids.", 
+                instruction: "How many band-aids?",
+                options: ["5 stars", "3 stars"], 
+                isNumber: true, 
+                correctIdx: 0,
+                hintWrong: "Tap 5 stars!" 
+              },
+              { 
+                readingParagraph: "Poli sees seven cones.", 
+                instruction: "How many cones?",
+                options: ["10 stars", "7 stars"], 
+                isNumber: true, 
+                correctIdx: 1,
+                hintWrong: "Tap 7 stars!" 
+              },
+              { 
+                readingParagraph: "Roy finds two hoses.", 
+                instruction: "How many hoses?",
+                options: ["2 stars", "8 stars"], 
+                isNumber: true, 
+                correctIdx: 0,
+                hintWrong: "Tap 2 stars!" 
+              }
+            ]
+          }
+        ]
+      },
+      {
+        skill: "Writing",
+        icon: "fa-pencil",
+        color: "bg-amber-500",
+        border: "border-amber-500",
+        lesson: {
+          title: "Type the Sentence!",
+          text: "Look at the word choices below. Type the sentence on the chalkboard!",
+          voice: "Look at the word choices below. Type the sentence on the chalkboard!"
+        },
+        activities: [
+          {
+            name: "Greeting Sentence",
+            instruction: "Type the sentence on the board:",
+            questions: [
+              {
+                textClue: "Hello, I am Roy",
+                targetString: "Hello I am Roy",
+                scrambled: ["Hello", "I", "am", "Roy"],
+                clueChar: "roy",
+                hintWrong: "Type: Hello I am Roy"
+              },
+              {
+                textClue: "Nice to meet you",
+                targetString: "Nice to meet you",
+                scrambled: ["Nice", "to", "meet", "you"],
+                clueChar: "poli",
+                hintWrong: "Type: Nice to meet you"
+              },
+              {
+                textClue: "Good morning Amber",
+                targetString: "Good morning Amber",
+                scrambled: ["Good", "morning", "Amber"],
+                clueChar: "amber",
+                hintWrong: "Type: Good morning Amber"
+              },
+              {
+                textClue: "Goodbye my friend",
+                targetString: "Goodbye my friend",
+                scrambled: ["Goodbye", "my", "friend"],
+                clueChar: "helly",
+                hintWrong: "Type: Goodbye my friend"
+              },
+              {
+                textClue: "How are you",
+                targetString: "How are you",
+                scrambled: ["How", "are", "you"],
+                clueChar: "roy",
+                hintWrong: "Type: How are you"
+              }
+            ]
+          },
+          {
+            name: "Number Words",
+            instruction: "Type the sentence on the board:",
+            questions: [
+              {
+                textClue: "I see three stars",
+                targetString: "I see three stars",
+                scrambled: ["I", "see", "three", "stars"],
+                clueChar: "siren",
+                hintWrong: "Type: I see three stars"
+              },
+              {
+                textClue: "Roy has five hoses",
+                targetString: "Roy has five hoses",
+                scrambled: ["Roy", "has", "five", "hoses"],
+                clueChar: "roy",
+                hintWrong: "Type: Roy has five hoses"
+              },
+              {
+                textClue: "There is one car",
+                targetString: "There is one car",
+                scrambled: ["There", "is", "one", "car"],
+                clueChar: "poli",
+                hintWrong: "Type: There is one car"
+              },
+              {
+                textClue: "I hear eight sirens",
+                targetString: "I hear eight sirens",
+                scrambled: ["I", "hear", "eight", "sirens"],
+                clueChar: "siren",
+                hintWrong: "Type: I hear eight sirens"
+              },
+              {
+                textClue: "We have ten badges",
+                targetString: "We have ten badges",
+                scrambled: ["We", "have", "ten", "badges"],
+                clueChar: "amber",
+                hintWrong: "Type: We have ten badges"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        skill: "Speaking",
+        icon: "fa-microphone",
+        color: "bg-emerald-500",
+        border: "border-emerald-500",
+        lesson: {
+          title: "Speak Aloud!",
+          text: "Tap the mic and say the sentence!",
+          voice: "Tap the red mic and say the sentence!"
+        },
+        activities: [
+          {
+            name: "Say Greetings",
+            instruction: "Tap mic, say sentence aloud:",
+            questions: [
+              {
+                targetText: "Hello, I am Roy.",
+                keywords: ["hello", "roy"],
+                hintWrong: "Say: 'Hello, I am Roy.'"
+              },
+              {
+                targetText: "Good morning, class.",
+                keywords: ["good", "morning"],
+                hintWrong: "Say: 'Good morning, class.'"
+              },
+              {
+                targetText: "Goodbye, my friend.",
+                keywords: ["goodbye", "friend"],
+                hintWrong: "Say: 'Goodbye, my friend.'"
+              },
+              {
+                targetText: "Thank you very much.",
+                keywords: ["thank", "you"],
+                hintWrong: "Say: 'Thank you very much.'"
+              },
+              {
+                targetText: "Nice to meet you.",
+                keywords: ["nice", "meet", "you"],
+                hintWrong: "Say: 'Nice to meet you.'"
+              }
+            ]
+          },
+          {
+            name: "Say Number Sentences",
+            instruction: "Tap mic, say sentence aloud:",
+            questions: [
+              {
+                targetText: "I have one car.",
+                keywords: ["one", "car"],
+                hintWrong: "Say: 'I have one car.'"
+              },
+              {
+                targetText: "She sees three stars.",
+                keywords: ["three", "stars"],
+                hintWrong: "Say: 'She sees three stars.'"
+              },
+              {
+                targetText: "We have five hoses.",
+                keywords: ["five", "hoses"],
+                hintWrong: "Say: 'We have five hoses.'"
+              },
+              {
+                targetText: "I hear eight sirens.",
+                keywords: ["eight", "sirens"],
+                hintWrong: "Say: 'I hear eight sirens.'"
+              },
+              {
+                targetText: "It is ten o'clock.",
+                keywords: ["ten", "clock"],
+                hintWrong: "Say: 'It is ten o'clock.'"
+              }
+            ]
+          }
+        ]
+      }
+    ];
+  </script>
+
+  <!-- GAMEPLAY MANAGEMENT STATE ENGINE -->
+  <script>
+    window.totalStars = 0;
+    window.stationsCompleted = [false, false, false, false];
+
+    let currentStationIdx = 0;
+    let currentActivityIdx = 0;
+    let currentQuestionIdx = 0;
+    let stationStarsEarned = 0;
+    let stationTotalQuestions = 10;
+
+    window.onload = function() {
+      document.getElementById('roy-splash-svg').innerHTML = CharacterSVGs.roy();
+      document.getElementById('teach-roy-avatar').innerHTML = CharacterSVGs.roy();
+
+      const today = new Date();
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      document.getElementById('cert-date-stamp').innerText = today.toLocaleDateString('en-US', options);
+      
+      if (recognition) {
+        recognition.onstart = function() {
+          isListening = true;
+          document.getElementById('btn-mic-capture').className = "w-28 h-28 rounded-full bg-red-600 text-white flex items-center justify-center text-5xl shadow-2xl mic-recording border-4 border-red-300";
+          document.getElementById('mic-status-text').innerText = "LISTENING...";
+        };
+
+        recognition.onspeechend = function() {
+          recognition.stop();
+        };
+
+        recognition.onend = function() {
+          isListening = false;
+          document.getElementById('btn-mic-capture').className = "w-28 h-28 rounded-full bg-red-500 text-white flex items-center justify-center text-5xl shadow-2xl transition-all border-4 border-white";
+          document.getElementById('mic-status-text').innerText = "TAP TO SPEAK!";
+        };
+
+        recognition.onresult = function(event) {
+          const transcript = event.results[0][0].transcript.toLowerCase().trim();
+          document.getElementById('speech-recognized-card').classList.remove('hidden');
+          document.getElementById('speech-heard-phrase').innerText = `"${event.results[0][0].transcript}"`;
+          
+          evaluateSpeechInput(transcript);
+        };
+
+        recognition.onerror = function() {
+          document.getElementById('mic-status-text').innerText = "MIC ERROR - TRY AGAIN";
+        };
+      } else {
+        document.getElementById('mic-status-text').innerText = "MIC NOT SUPPORTED";
+      }
+
+      speakNow("Welcome! Let's help Roy!");
+    };
+
+    function switchScreen(screenId) {
+      const screens = ['screen-splash', 'screen-map', 'screen-teach', 'screen-game', 'screen-badge', 'screen-victory'];
+      screens.forEach(id => {
+        const elem = document.getElementById(id);
+        if (id === screenId) {
+          elem.classList.remove('hidden');
+          elem.classList.add('block');
+        } else {
+          elem.classList.add('hidden');
+          elem.classList.remove('block');
+        }
+      });
+    }
+
+    function startRescueAcademy() {
+      switchScreen('screen-map');
+      updateRouteMap();
+      speakNow("Pick a game!");
+    }
+
+    function updateRouteMap() {
+      const grid = document.getElementById('map-stations-grid');
+      grid.innerHTML = "";
+
+      let completedCount = 0;
+
+      trainingProgram.forEach((station, idx) => {
+        const isFinished = window.stationsCompleted[idx];
+        if (isFinished) completedCount++;
+
+        const card = document.createElement('div');
+        card.className = "p-6 rounded-3xl border-4 text-left transition-all relative bg-white border-blue-400 hover:shadow-xl cursor-pointer hover:scale-[1.02]";
+        card.onclick = () => selectStation(idx);
+
+        const badgeIcon = isFinished 
+          ? '<div class="absolute top-4 right-4 flex items-center gap-1"><span class="text-emerald-600 text-sm font-bold font-kids">Passed</span><i class="fa-solid fa-circle-check text-emerald-500 text-3xl"></i></div>' 
+          : '<div class="absolute top-4 right-4"><i class="fa-solid fa-star text-slate-300 text-2xl"></i></div>';
+
+        card.innerHTML = `
+          ${badgeIcon}
+          <div class="flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl ${station.color} text-white flex items-center justify-center text-3xl shadow-md">
+              <i class="fa-solid ${station.icon}"></i>
+            </div>
+            <div>
+              <p class="text-sm font-black text-slate-400 uppercase tracking-widest">GAME ${idx + 1}</p>
+              <h3 class="font-kids text-2xl text-slate-800">${station.skill}</h3>
+              <p class="text-sm font-bold text-slate-500">10 Stars ⭐</p>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      const progressPercent = (completedCount / 4) * 100;
+      document.getElementById('route-progress-bar').style.width = `${progressPercent}%`;
+
+      const badgeBtn = document.getElementById('final-badge-btn');
+      if (completedCount > 0) {
+        badgeBtn.className = "w-full py-5 bg-yellow-400 hover:bg-yellow-500 text-slate-800 font-kids text-2xl rounded-2xl cursor-pointer shadow-lg border-b-8 border-yellow-600 animate-bounce";
+      } else {
+        badgeBtn.className = "w-full py-5 bg-slate-200 text-slate-500 font-kids text-2xl rounded-2xl cursor-pointer shadow border-b-4 border-slate-300";
+      }
+    }
+
+    function selectStation(idx) {
+      currentStationIdx = idx;
+      currentActivityIdx = 0;
+      currentQuestionIdx = 0;
+      stationStarsEarned = 0;
+
+      const station = trainingProgram[idx];
+      document.getElementById('hud-title').innerText = `${station.skill}`;
+      document.getElementById('hud-subtitle').innerText = `Game ${idx + 1}`;
+
+      document.getElementById('teach-title').innerText = station.lesson.title;
+      
+      const stepsContainer = document.getElementById('teach-steps-container');
+      stepsContainer.innerHTML = "";
+      
+      const guides = {
+        "Listening": [
+          { icon: "fa-volume-high", color: "text-red-500", text: "1. Tap big red button." },
+          { icon: "fa-hand-pointer", color: "text-yellow-500", text: "2. Tap correct answer!" }
+        ],
+        "Reading": [
+          { icon: "fa-book-open", color: "text-blue-500", text: "1. Read story box." },
+          { icon: "fa-circle-question", color: "text-indigo-500", text: "2. Tap answer!" }
+        ],
+        "Writing": [
+          { icon: "fa-keyboard", color: "text-amber-500", text: "1. Look at word choices below." },
+          { icon: "fa-pen-to-square", color: "text-emerald-500", text: "2. Type sentence on board!" }
+        ],
+        "Speaking": [
+          { icon: "fa-microphone", color: "text-emerald-500", text: "1. Tap red mic." },
+          { icon: "fa-comment-dots", color: "text-cyan-500", text: "2. Say sentence aloud!" }
+        ]
+      };
+
+      guides[station.skill].forEach(guide => {
+        const stepRow = document.createElement('div');
+        stepRow.className = "flex items-center gap-4 bg-slate-50 border-2 border-slate-200 p-4 rounded-2xl shadow-sm";
+        stepRow.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center border shadow-sm ${guide.color} text-xl">
+            <i class="fa-solid ${guide.icon}"></i>
+          </div>
+          <p class="text-base md:text-lg font-bold text-slate-700 font-kids">${guide.text}</p>
+        `;
+        stepsContainer.appendChild(stepRow);
+      });
+
+      switchScreen('screen-teach');
+      speakLesson();
+    }
+
+    function speakLesson() {
+      const station = trainingProgram[currentStationIdx];
+      speakNow(station.lesson.voice);
+    }
+
+    function launchPlayMode() {
+      switchScreen('screen-game');
+      loadActiveQuestion();
+    }
+
+    function loadActiveQuestion() {
+      document.getElementById('round-feedback').classList.add('hidden');
+
+      const station = trainingProgram[currentStationIdx];
+      const activity = station.activities[currentActivityIdx];
+      const question = activity.questions[currentQuestionIdx];
+
+      const absoluteQuestionNumber = (currentActivityIdx * 5) + currentQuestionIdx + 1;
+      document.getElementById('game-skill-indicator').innerText = `${station.skill}`;
+      document.getElementById('game-progress-indicator').innerText = `QUESTION ${absoluteQuestionNumber}/10`;
+
+      document.getElementById('audio-trigger-container').classList.add('hidden');
+      document.getElementById('reading-word-sign').classList.add('hidden');
+      document.getElementById('writing-word-sign').classList.add('hidden');
+      document.getElementById('writing-submit-container').classList.add('hidden');
+      document.getElementById('speaking-mic-interface').classList.add('hidden');
+      document.getElementById('game-options-container').classList.remove('hidden');
+
+      if (station.skill === "Listening") {
+        document.getElementById('audio-trigger-container').classList.remove('hidden');
+        document.getElementById('game-instruction').innerText = question.instruction || activity.instruction;
+        document.getElementById('game-help-cue').innerText = "TAP RED BUTTON TO LISTEN!";
+        renderOptionCards(question);
+        speakActiveQuestion();
+
+      } else if (station.skill === "Reading") {
+        document.getElementById('reading-word-sign').classList.remove('hidden');
+        document.getElementById('reading-word-text').innerText = question.readingParagraph;
+        document.getElementById('game-instruction').innerText = question.instruction;
+        document.getElementById('game-help-cue').innerText = "READ BOX AND TAP ANSWER!";
+        renderOptionCards(question);
+
+      } else if (station.skill === "Writing") {
+        document.getElementById('writing-word-sign').classList.remove('hidden');
+        document.getElementById('writing-submit-container').classList.remove('hidden');
+        document.getElementById('game-instruction').innerText = activity.instruction;
+        document.getElementById('game-help-cue').innerText = "USE WORDS BELOW TO TYPE ON THE BOARD!";
+        
+        const graphicContainer = document.getElementById('writing-reference-graphic');
+        graphicContainer.innerHTML = CharacterSVGs[question.clueChar] ? CharacterSVGs[question.clueChar]() : `<i class="fa-solid fa-pen-nib text-4xl text-white"></i>`;
+        
+        document.getElementById('writing-input-box').value = "";
+        renderWritingWordChoices(question);
+
+      } else if (station.skill === "Speaking") {
+        document.getElementById('game-options-container').classList.add('hidden');
+        document.getElementById('speaking-mic-interface').classList.remove('hidden');
+        document.getElementById('speech-recognized-card').classList.add('hidden');
+        document.getElementById('game-instruction').innerText = activity.instruction;
+        document.getElementById('game-help-cue').innerText = "TAP MIC AND SAY SENTENCE ALOUD!";
+        
+        document.getElementById('speaking-target-word').innerText = question.targetText;
+      }
+    }
+
+    function speakActiveQuestion() {
+      const station = trainingProgram[currentStationIdx];
+      const activity = station.activities[currentActivityIdx];
+      const question = activity.questions[currentQuestionIdx];
+
+      if (station.skill === "Listening") {
+        speakNow(question.audio);
+      }
+    }
+
+    function renderOptionCards(question) {
+      const container = document.getElementById('game-options-container');
+      container.innerHTML = "";
+
+      question.options.forEach((optText, index) => {
+        const card = document.createElement('button');
+        card.className = "bg-white border-4 border-slate-200 rounded-3xl p-6 flex flex-col items-center justify-center gap-4 transition-all hover:scale-[1.03] hover:border-indigo-400 shadow-md focus:outline-none min-h-[180px]";
+        
+        card.onclick = () => selectOption(index);
+
+        let optionGraphics = "";
+        let textLabel = optText;
+        
+        if (question.charLeft && index === 0) {
+          optionGraphics = `<div class="w-28 h-28">${CharacterSVGs[question.charLeft]()}</div>`;
+        } else if (question.charRight && index === 1) {
+          optionGraphics = `<div class="w-28 h-28">${CharacterSVGs[question.charRight]()}</div>`;
+        } else if (question.isNumber) {
+          let starIcons = "";
+          const digit = parseInt(optText.replace(/[^0-9]/g, '')) || (optText.includes("one") ? 1 : optText.includes("two") ? 2 : optText.includes("three") ? 3 : optText.includes("four") ? 4 : optText.includes("five") ? 5 : optText.includes("six") ? 6 : optText.includes("seven") ? 7 : optText.includes("eight") ? 8 : optText.includes("nine") ? 9 : 10);
+          for(let s=0; s<digit; s++) {
+            starIcons += `<i class="fa-solid fa-star text-yellow-400 text-2xl md:text-3xl animate-pulse drop-shadow"></i>`;
+          }
+          optionGraphics = `<div class="flex flex-wrap gap-2 justify-center max-w-[200px] py-2">${starIcons}</div>`;
+          textLabel = ""; 
+        } else {
+          optionGraphics = `<div class="w-18 h-18 bg-blue-100 rounded-full flex items-center justify-center text-blue-500 text-3xl"><i class="fa-solid fa-question"></i></div>`;
+        }
+
+        card.innerHTML = `
+          ${optionGraphics}
+          ${textLabel ? `<span class="font-kids text-2xl text-slate-800 uppercase tracking-wide mt-1">${textLabel}</span>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function selectOption(idx) {
+      const station = trainingProgram[currentStationIdx];
+      const activity = station.activities[currentActivityIdx];
+      const question = activity.questions[currentQuestionIdx];
+
+      const feedbackBox = document.getElementById('round-feedback');
+      const headline = document.getElementById('feedback-headline');
+      const expl = document.getElementById('feedback-explanation');
+
+      if (idx === question.correctIdx) {
+        playSynthBeep(true);
+        feedbackBox.className = "py-5 px-6 rounded-3xl font-kids text-xl flex flex-col gap-2 items-center justify-center border-4 bg-emerald-50 border-emerald-400 text-emerald-800 shadow-lg";
+        headline.innerText = "Great Job! ⭐";
+        expl.innerText = "Correct! You got it!";
+        currentFeedbackText = "Great Job! Correct!";
+        
+        stationStarsEarned++;
+        window.totalStars++;
+        updateHUDAwards();
+        if (window.saveProgressToCloud) window.saveProgressToCloud();
+      } else {
+        playSynthBeep(false);
+        feedbackBox.className = "py-5 px-6 rounded-3xl font-kids text-xl flex flex-col gap-2 items-center justify-center border-4 bg-red-50 border-red-400 text-red-800 shadow-lg";
+        headline.innerText = "Try Again! 🚒";
+        expl.innerText = question.hintWrong;
+        currentFeedbackText = "Try Again! " + question.hintWrong;
+      }
+
+      feedbackBox.classList.remove('hidden');
+      speakNow(currentFeedbackText);
+    }
+
+    // WRITING STATION: STATIC VISUAL WORD BANK FOR TYPING
+    function renderWritingWordChoices(question) {
+      const container = document.getElementById('game-options-container');
+      container.classList.remove('hidden');
+      container.innerHTML = "";
+
+      const wrapper = document.createElement('div');
+      wrapper.className = "col-span-full space-y-3";
+      
+      const label = document.createElement('p');
+      label.className = "font-kids text-xl text-slate-700 uppercase tracking-wider";
+      label.innerText = "Word Bank:";
+      wrapper.appendChild(label);
+
+      const tilesGrid = document.createElement('div');
+      tilesGrid.className = "flex flex-wrap items-center justify-center gap-3";
+
+      question.scrambled.forEach((word) => {
+        const tile = document.createElement('div');
+        tile.className = "bg-white border-4 border-amber-400 rounded-2xl px-6 py-3 font-kids text-2xl md:text-3xl text-slate-800 shadow-md cursor-default";
+        tile.innerText = word;
+        tilesGrid.appendChild(tile);
+      });
+
+      wrapper.appendChild(tilesGrid);
+      container.appendChild(wrapper);
+    }
+
+    function clearChalkboardSentence() {
+      const box = document.getElementById('writing-input-box');
+      if (box) {
+        box.value = "";
+        box.focus();
+      }
+    }
+
+    function checkChalkboardBuild() {
+      const station = trainingProgram[currentStationIdx];
+      const activity = station.activities[currentActivityIdx];
+      const question = activity.questions[currentQuestionIdx];
+
+      const feedbackBox = document.getElementById('round-feedback');
+      const headline = document.getElementById('feedback-headline');
+      const expl = document.getElementById('feedback-explanation');
+
+      const userTyped = document.getElementById('writing-input-box').value;
+      
+      // Clean string comparison for Year 1 pupils (ignores punctuation/extra spaces/casing)
+      const cleanTyped = userTyped.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+      const cleanTarget = question.targetString.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+
+      if (cleanTyped === cleanTarget && cleanTyped.length > 0) {
+        playSynthBeep(true);
+        feedbackBox.className = "py-5 px-6 rounded-3xl font-kids text-xl flex flex-col gap-2 items-center justify-center border-4 bg-emerald-50 border-emerald-400 text-emerald-800 shadow-lg";
+        headline.innerText = "Correct! 🎨";
+        expl.innerText = "Great typing!";
+        currentFeedbackText = "Correct! Great typing!";
+        
+        stationStarsEarned++;
+        window.totalStars++;
+        updateHUDAwards();
+        if (window.saveProgressToCloud) window.saveProgressToCloud();
+      } else {
+        playSynthBeep(false);
+        feedbackBox.className = "py-5 px-6 rounded-3xl font-kids text-xl flex flex-col gap-2 items-center justify-center border-4 bg-red-50 border-red-400 text-red-800 shadow-lg";
+        headline.innerText = "Try Again! 🚒";
+        expl.innerText = question.hintWrong;
+        currentFeedbackText = "Try Again! " + question.hintWrong;
+      }
+
+      feedbackBox.classList.remove('hidden');
+      speakNow(currentFeedbackText);
+    }
+
+    // SPEAKING STATION: SPEECH TO TEXT ENGINE
+    function startSpeechCapture() {
+      if (isListening) return;
+
+      if (!recognition) {
+        skipVoiceVerify();
+        return;
+      }
+
+      try {
+        recognition.start();
+      } catch (e) {
+        skipVoiceVerify();
+      }
+    }
+
+    function evaluateSpeechInput(spokenText) {
+      const question = trainingProgram[currentStationIdx].activities[currentActivityIdx].questions[currentQuestionIdx];
+      const targetClean = question.targetText.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+
+      const feedbackBox = document.getElementById('round-feedback');
+      const headline = document.getElementById('feedback-headline');
+      const expl = document.getElementById('feedback-explanation');
+
+      // Flexible Year 1 evaluation: match target or essential sentence keywords
+      let isMatch = spokenText.includes(targetClean) || targetClean.includes(spokenText);
+      
+      if (!isMatch && question.keywords) {
+        let matchedCount = 0;
+        question.keywords.forEach(kw => {
+          if (spokenText.includes(kw.toLowerCase())) matchedCount++;
+        });
+        if (matchedCount >= Math.min(2, question.keywords.length)) {
+          isMatch = true;
+        }
+      }
+
+      if (isMatch) {
+        playSynthBeep(true);
+        feedbackBox.className = "py-5 px-6 rounded-3xl font-kids text-xl flex flex-col gap-2 items-center justify-center border-4 bg-emerald-50 border-emerald-400 text-emerald-800 shadow-lg";
+        headline.innerText = "Awesome! 📣";
+        expl.innerText = `You said: "${question.targetText}"!`;
+        currentFeedbackText = `Awesome! You said: "${question.targetText}"!`;
+
+        stationStarsEarned++;
+        window.totalStars++;
+        updateHUDAwards();
+        if (window.saveProgressToCloud) window.saveProgressToCloud();
+      } else {
+        playSynthBeep(false);
+        feedbackBox.className = "py-5 px-6 rounded-3xl font-kids text-xl flex flex-col gap-2 items-center justify-center border-4 bg-red-50 border-red-400 text-red-800 shadow-lg";
+        headline.innerText = "Try Again! 🚒";
+        expl.innerText = question.hintWrong;
+        currentFeedbackText = "Try Again! " + question.hintWrong;
+      }
+
+      feedbackBox.classList.remove('hidden');
+      speakNow(currentFeedbackText);
+    }
+
+    function skipVoiceVerify() {
+      const question = trainingProgram[currentStationIdx].activities[currentActivityIdx].questions[currentQuestionIdx];
+      
+      const feedbackBox = document.getElementById('round-feedback');
+      const headline = document.getElementById('feedback-headline');
+      const expl = document.getElementById('feedback-explanation');
+
+      playSynthBeep(true);
+      feedbackBox.className = "py-5 px-6 rounded-3xl font-kids text-xl flex flex-col gap-2 items-center justify-center border-4 bg-emerald-50 border-emerald-400 text-emerald-800 shadow-lg";
+      headline.innerText = "Good Job! ✔️";
+      expl.innerText = `Great speaking: "${question.targetText}"!`;
+      currentFeedbackText = `Great speaking: "${question.targetText}"!`;
+
+      stationStarsEarned++;
+      window.totalStars++;
+      updateHUDAwards();
+      if (window.saveProgressToCloud) window.saveProgressToCloud();
+
+      feedbackBox.classList.remove('hidden');
+      speakNow(currentFeedbackText);
+    }
+
+    function speakExplanation() {
+      speakNow(currentFeedbackText);
+    }
+
+    // HUD & STATE MANAGEMENT
+    function updateHUDAwards() {
+      document.getElementById('star-count').innerText = window.totalStars;
+    }
+
+    // STEPS NAVIGATION LOOP
+    function advanceNext() {
+      currentQuestionIdx++;
+
+      if (currentQuestionIdx >= 5) {
+        currentQuestionIdx = 0;
+        currentActivityIdx++;
+
+        if (currentActivityIdx >= 2) {
+          window.stationsCompleted[currentStationIdx] = true;
+          openVictoryDesk();
+          return;
+        }
+      }
+
+      loadActiveQuestion();
+    }
+
+    function openVictoryDesk() {
+      switchScreen('screen-victory');
+      document.getElementById('victory-score-display').innerText = `${stationStarsEarned} / 10 ⭐`;
+      
+      speakNow(`Great job! You earned ${stationStarsEarned} stars!`);
+    }
+
+    function goToNextStation() {
+      switchScreen('screen-map');
+      updateRouteMap();
+    }
+
+    function redoActiveStation() {
+      currentActivityIdx = 0;
+      currentQuestionIdx = 0;
+      stationStarsEarned = 0;
+      launchPlayMode();
+    }
+
+    // FINAL REWARD BADGE MANAGEMENT
+    function openBadgeScreen() {
+      switchScreen('screen-badge');
+      speakNow("Congratulations! Type your name for your certificate!");
+    }
+
+    function syncBadgeName() {
+      const name = document.getElementById('cadet-name-input').value;
+      const display = document.getElementById('badge-name-display');
+      display.innerText = name.trim() ? name : "Cadet Hero";
+    }
+
+    function resetRescueAcademy() {
+      currentStationIdx = 0;
+      currentActivityIdx = 0;
+      currentQuestionIdx = 0;
+      window.totalStars = 0;
+      stationStarsEarned = 0;
+      window.stationsCompleted = [false, false, false, false];
+      updateHUDAwards();
+
+      document.getElementById('cadet-name-input').value = "";
+      syncBadgeName();
+
+      switchScreen('screen-splash');
+      speakNow("Game reset! Let me know when you are ready to play!");
+    }
+  </script>
+</body>
+</html>
+
+```
